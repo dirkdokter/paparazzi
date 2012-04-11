@@ -70,6 +70,11 @@ int32_t ins_baro_alt;
 bool_t  ins_update_on_agl;
 int32_t ins_sonar_offset;
 #endif
+#if USE_INS_ALTIMETER_FROM_MODULE
+//int32_t ins_ext_alt_qfe;
+bool_t  ins_ext_alt_active;
+int32_t ins_ext_alt;
+#endif
 #endif
 bool_t  ins_vf_realign;
 
@@ -105,6 +110,9 @@ void ins_init() {
   ins_baro_initialised = FALSE;
 #if USE_SONAR
   ins_update_on_agl = FALSE;
+#endif
+#if USE_INS_ALTIMETER_FROM_MODULE
+  ins_ext_alt_active = FALSE;
 #endif
   vff_init(0., 0., 0.);
 #endif
@@ -148,7 +156,11 @@ void ins_propagate() {
 
 #if USE_VFF
   float z_accel_meas_float = ACCEL_FLOAT_OF_BFP(accel_meas_ltp.z);
+#if USE_INS_ALTIMETER_FROM_MODULE
+  if ((baro.status == BS_RUNNING && ins_baro_initialised) || ins_ext_alt_active) {
+#else
   if (baro.status == BS_RUNNING && ins_baro_initialised) {
+#endif
     vff_propagate(z_accel_meas_float);
     ins_ltp_accel.z = ACCEL_BFP_OF_REAL(vff_zdotdot);
     ins_ltp_speed.z = SPEED_BFP_OF_REAL(vff_zdot);
@@ -177,6 +189,10 @@ void ins_propagate() {
 
 void ins_update_baro() {
 #if USE_VFF
+#if USE_INS_ALTIMETER_FROM_MODULE
+  if (ins_ext_alt_active)
+       return;
+#endif
   if (baro.status == BS_RUNNING) {
     if (!ins_baro_initialised) {
       ins_qfe = baro.absolute;
@@ -200,6 +216,30 @@ void ins_update_baro() {
     }
     vff_update(alt_float);
   }
+#endif
+}
+
+void ins_update_module_altimeter() {
+#if USE_VFF
+#if USE_INS_ALTIMETER_FROM_MODULE
+  if (ins_ext_alt_active) {
+//  ins_ext_alt_qfe = 0;
+//  ins_ext_alt = ((baro.absolute - ins_ext_alt_qfe) * INS_BARO_SENS_NUM)/INS_BARO_SENS_DEN;
+    float alt_float = POS_FLOAT_OF_BFP(ins_ext_alt);
+    if (ins_vf_realign) {
+      ins_vf_realign = FALSE;
+    //ins_ext_alt_qfe = 0;
+      vff_realign(0.);
+      ins_ltp_accel.z = ACCEL_BFP_OF_REAL(vff_zdotdot);
+      ins_ltp_speed.z = SPEED_BFP_OF_REAL(vff_zdot);
+      ins_ltp_pos.z   = POS_BFP_OF_REAL(vff_z);
+      ins_enu_pos.z = -ins_ltp_pos.z;
+      ins_enu_speed.z = -ins_ltp_speed.z;
+      ins_enu_accel.z = -ins_ltp_accel.z;
+    }
+    vff_update(alt_float);
+  }
+#endif
 #endif
 }
 

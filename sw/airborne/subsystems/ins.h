@@ -41,6 +41,11 @@ extern bool_t  ins_baro_initialised;
 extern bool_t  ins_update_on_agl; /* use sonar to update agl if available */
 extern int32_t ins_sonar_offset;
 #endif
+#if USE_INS_ALTIMETER_FROM_MODULE
+//int32_t ins_ext_alt_qfe;
+extern bool_t  ins_ext_alt_active;
+extern int32_t ins_ext_alt;
+#endif
 #endif
 
 /* output LTP NED               */
@@ -68,6 +73,7 @@ extern void ins_propagate( void );
 extern void ins_update_baro( void );
 extern void ins_update_gps( void );
 extern void ins_update_sonar( void );
+extern void ins_update_module_altimeter( void );
 
 
 #endif /* INS_H */
