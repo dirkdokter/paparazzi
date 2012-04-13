@@ -113,6 +113,7 @@ void ins_init() {
 #endif
 #if USE_INS_ALTIMETER_FROM_MODULE
   ins_ext_alt_active = FALSE;
+  ins_qfe = 0;
 #endif
   vff_init(0., 0., 0.);
 #endif
