@@ -94,8 +94,8 @@
   <section name="AUTOPILOT">
     <define name="MODE_MANUAL" value="AP_MODE_ATTITUDE_DIRECT"/>
     <!--<define name="MODE_AUTO1"  value="AP_MODE_HOVER_Z_HOLD"/>-->
-    <define name="MODE_AUTO1"  value="AP_MODE_ATTITUDE_RC_CLIMB"/>
-    <define name="MODE_AUTO2"  value="AP_MODE_NAV"/>
+    <define name="MODE_AUTO1"  value="AP_MODE_ATTITUDE_Z_HOLD"/>
+    <define name="MODE_AUTO2"  value="AP_MODE_ATTITUDE_Z_HOLD"/>
     <!--<define name="AUTOPILOT_INSTANT_START_WITH_SAFETIES"  value="TRUE"/>-->
   </section>
 
@@ -203,7 +203,7 @@
     <define name="RC_CLIMB_COEF" value ="163"/>
     <!-- BOOZ_SPEED_I_OF_F(1.5) * 20% -->
     <define name="RC_CLIMB_DEAD_BAND" value ="160000"/>
-   <define name="NOMINAL_HOVER_THROTTLE" value ="0.34"/>
+   <define name="NOMINAL_HOVER_THROTTLE" value ="0.59"/>
   </section>
 
   <section name="GUIDANCE_H" prefix="GUIDANCE_H_">
@@ -225,6 +225,7 @@
 
   <modules main_freq="60">
     <load name="gps_ubx_ucenter.xml"/>
+    <load name="sonar_maxbotix_MB12XX.xml"/>
   </modules>
 <!--
   <modules main_freq="512">
