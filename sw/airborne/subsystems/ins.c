@@ -203,7 +203,7 @@ void ins_update_baro() {
     }
     ins_baro_alt = ((baro.absolute - ins_qfe) * INS_BARO_SENS_NUM)/INS_BARO_SENS_DEN;
     float alt_float = POS_FLOAT_OF_BFP(ins_baro_alt);
-    if (ins_vf_realign) {
+    if (ins_vf_realign || ins_do_gv_reset) {
       ins_vf_realign = FALSE;
       ins_qfe = baro.absolute;
 #if USE_SONAR
@@ -233,7 +233,7 @@ void ins_update_module_altimeter() {
 //  ins_ext_alt_qfe = 0;
 //  ins_ext_alt = ((baro.absolute - ins_ext_alt_qfe) * INS_BARO_SENS_NUM)/INS_BARO_SENS_DEN;
     float alt_float = POS_FLOAT_OF_BFP(ins_ext_alt);
-    if (ins_vf_realign) {
+    if (ins_vf_realign || ins_do_gv_reset) {
       ins_vf_realign = FALSE;
     //ins_ext_alt_qfe = 0;
       vff_realign(0.);
