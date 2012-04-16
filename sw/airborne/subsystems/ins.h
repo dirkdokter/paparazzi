@@ -25,6 +25,7 @@
 #include "std.h"
 #include "math/pprz_geodetic_int.h"
 #include "math/pprz_algebra_float.h"
+#include "guidance/guidance_v.h"
 
 /* gps transformed to LTP-NED  */
 extern struct LtpDef_i  ins_ltp_def;
@@ -48,7 +49,7 @@ extern int32_t ins_ext_alt;
 #endif
 #endif
 
-#define ins_SwitchExtAltimeter(_x) { ins_ext_alt_active = _x; }
+#define ins_SwitchExtAltimeter(_x) { ins_ext_alt_active = _x; guidance_v_reset_sp();}
 
 /* output LTP NED               */
 extern struct NedCoor_i ins_ltp_pos;

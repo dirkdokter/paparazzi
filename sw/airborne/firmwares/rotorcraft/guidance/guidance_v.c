@@ -155,6 +155,12 @@ void guidance_v_mode_changed(uint8_t new_mode) {
 
 }
 
+void guidance_v_reset_sp() {
+  guidance_v_z_sp = ins_ltp_pos.z; // set current altitude as setpoint
+  guidance_v_z_sum_err = 0;
+  GuidanceVSetRef(ins_ltp_pos.z, 0, 0);
+}
+
 void guidance_v_notify_in_flight( bool_t in_flight) {
   if (in_flight) {
     gv_adapt_init();
