@@ -180,7 +180,7 @@ void SONAR_MAXBOTIX12_IRQ_HANDLER(void)
       //ins_sonar_initialised = TRUE;
 
       ins_ext_alt = -sonar_filtered; //NED
-      ins_ext_alt_active = TRUE;
+      //ins_ext_alt_active = TRUE;
       ins_update_module_altimeter();
       //sonar_filtered = conv_factor_cm*sonar_filter_val;
       //DOWNLINK_SEND_VFF(DefaultChannel, &alt_mm_flt,0,0,0,0,0,0);

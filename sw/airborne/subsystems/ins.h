@@ -48,6 +48,8 @@ extern int32_t ins_ext_alt;
 #endif
 #endif
 
+#define ins_SwitchExtAltimeter(_x) { ins_ext_alt_active = _x; }
+
 /* output LTP NED               */
 extern struct NedCoor_i ins_ltp_pos;
 extern struct NedCoor_i ins_ltp_speed;
