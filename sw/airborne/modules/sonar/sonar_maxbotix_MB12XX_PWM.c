@@ -13,6 +13,7 @@
 
 //#include "sys_time.h"
 
+uint16_t sonar_meas;
 uint16_t sonar_meas_raw;
 uint32_t sonar_filtered;
 
