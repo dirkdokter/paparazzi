@@ -78,6 +78,8 @@ int32_t ins_ext_alt;
 #endif
 bool_t  ins_vf_realign;
 
+bool_t ins_do_gv_reset;
+
 /* output                      */
 struct NedCoor_i ins_ltp_pos;
 struct NedCoor_i ins_ltp_speed;
@@ -216,6 +218,10 @@ void ins_update_baro() {
       ins_enu_accel.z = -ins_ltp_accel.z;
     }
     vff_update(alt_float);
+    if (ins_do_gv_reset) {
+        guidance_v_reset_sp();
+        ins_do_gv_reset=FALSE;
+    }
   }
 #endif
 }
@@ -239,6 +245,10 @@ void ins_update_module_altimeter() {
       ins_enu_accel.z = -ins_ltp_accel.z;
     }
     vff_update(alt_float);
+    if (ins_do_gv_reset) {
+        guidance_v_reset_sp();
+        ins_do_gv_reset=FALSE;
+    }
   }
 #endif
 #endif

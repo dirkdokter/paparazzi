@@ -49,7 +49,7 @@ extern int32_t ins_ext_alt;
 #endif
 #endif
 
-#define ins_SwitchExtAltimeter(_x) { ins_ext_alt_active = _x; guidance_v_reset_sp();}
+#define ins_SwitchExtAltimeter(_x) { ins_ext_alt_active = _x; ins_do_gv_reset = TRUE;}
 
 /* output LTP NED               */
 extern struct NedCoor_i ins_ltp_pos;
@@ -67,7 +67,7 @@ extern struct FloatVect2 ins_gps_speed_m_s_ned;
 
 extern bool_t ins_hf_realign;
 extern bool_t ins_vf_realign;
-
+extern bool_t ins_do_gv_reset;
 extern void ins_init( void );
 extern void ins_periodic( void );
 extern void ins_realign_h(struct FloatVect2 pos, struct FloatVect2 speed);
