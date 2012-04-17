@@ -267,10 +267,13 @@ void ins_update_gps(void) {
     ned_of_ecef_point_i(&ins_gps_pos_cm_ned, &ins_ltp_def, &gps.ecef_pos);
     ned_of_ecef_vect_i(&ins_gps_speed_cm_s_ned, &ins_ltp_def, &gps.ecef_vel);
 #if USE_HFF
+    // copy gps_ltp cm to output variable in m
     VECT2_ASSIGN(ins_gps_pos_m_ned, ins_gps_pos_cm_ned.x, ins_gps_pos_cm_ned.y);
     VECT2_SDIV(ins_gps_pos_m_ned, ins_gps_pos_m_ned, 100.);
+    // idem speed
     VECT2_ASSIGN(ins_gps_speed_m_s_ned, ins_gps_speed_cm_s_ned.x, ins_gps_speed_cm_s_ned.y);
     VECT2_SDIV(ins_gps_speed_m_s_ned, ins_gps_speed_m_s_ned, 100.);
+
     if (ins_hf_realign) {
       ins_hf_realign = FALSE;
 #ifdef SITL
