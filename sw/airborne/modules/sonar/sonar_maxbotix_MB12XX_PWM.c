@@ -8,7 +8,7 @@
 #include "mcu_periph/uart.h"
 #include "messages.h"
 #include "messages.h"
-//#include "downlink.h"
+#include "subsystems/datalink/downlink.h"
 #include "subsystems/ins.h"
 
 //#include "sys_time.h"
@@ -184,7 +184,7 @@ void SONAR_MAXBOTIX12_IRQ_HANDLER(void)
       ins_update_module_altimeter();
       //sonar_filtered = conv_factor_cm*sonar_filter_val;
       //DOWNLINK_SEND_VFF(DefaultChannel, &alt_mm_flt,0,0,0,0,0,0);
-      //DOWNLINK_SEND_INS_Z(DefaultChannel, &sonar_filtered,&sonar_spike_cnt,0, 0);
+      DOWNLINK_SEND_INS_Z(DefaultChannel, DefaultDevice,&sonar_filtered,&sonar_spike_cnt,0,0);
     }
 }
 
