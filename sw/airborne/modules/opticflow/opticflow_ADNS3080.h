@@ -11,7 +11,7 @@
 
 #include "mcu_periph/uart.h"
 #include "messages.h"
-#include "downlink.h"
+#include "subsystems/datalink/downlink.h"
 
 //register addresses
 #define OPTFLOW_ADNS3080_ADDR_PROD_ID		0x00

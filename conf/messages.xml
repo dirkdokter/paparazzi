@@ -1770,6 +1770,11 @@
  <!--223 is free -->
  <!--224 is free -->
  <!--225 is free -->
+ <message name="OFLOW_DATA" id="225">
+  <field name="dx" type="int8"/>
+  <field name="dy" type="int8"/>
+  <field name="squal" type="uint8" alt_unit="real" alt_unit_coef=" #features"/>
+ </message>
  <!--226 is free -->
 
   <message name="TIME" id="227">

@@ -10,14 +10,14 @@
  * ignore bad-quality measurements
  * include butterworth filter
  */
-
+#include "std.h"
 #include "modules/opticflow/opticflow_ADNS3080.h"
 #include "modules/opticflow/opticflow_ADNS3080_srom.h"
 #include "mcu_periph/spi.h"
 #include "mcu_periph/uart.h"
 #include "messages.h"
-#include "downlink.h"
-#include "sys_time.h"
+#include "subsystems/datalink/downlink.h"
+#include "mcu_periph/sys_time.h"
 
 
 #include <stm32/gpio.h>
@@ -73,16 +73,16 @@ void optflow_ADNS3080_init( void ) {
 	//sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
 
 	//6469 FPS
-	//optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_LOW,OPTFLOW_ADNS3080_FP_LO_6469);
-	//sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
-	//optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_UP,OPTFLOW_ADNS3080_FP_UP_6469);
-	//sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
+	optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_LOW,OPTFLOW_ADNS3080_FP_LO_6469);
+	sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
+	optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_UP,OPTFLOW_ADNS3080_FP_UP_6469);
+	sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
 
 	//2000 FPS
-        optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_LOW,OPTFLOW_ADNS3080_FP_LO_2000);
-        sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
-        optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_UP,OPTFLOW_ADNS3080_FP_UP_2000);
-        sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
+        //optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_LOW,OPTFLOW_ADNS3080_FP_LO_2000);
+        //sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
+        //optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_UP,OPTFLOW_ADNS3080_FP_UP_2000);
+        //sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
 
 	/*optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_LOW,OPTFLOW_ADNS3080_FP_LO_2000);
 	sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
@@ -197,8 +197,8 @@ void optflow_ADNS3080_periodic( void ) {
               ofs_itgr_x += dx;
               ofs_itgr_x += dy;
 
-	      DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, &dx,&dy,&squal);
-	      DOWNLINK_SEND_FILTER2(DefaultChannel, &ofs_itgr_x,&ofs_itgr_y,0,0,0,0);
+	     DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, DefaultDevice, &dx,&dy,&squal);
+	     // DOWNLINK_SEND_FILTER2(DefaultChannel, &ofs_itgr_x,&ofs_itgr_y,0,0,0,0);
 
 
 	//dx      		 = (int8_t)optflow_ADNS3080_readRegister(OPTFLOW_ADNS3080_ADDR_DX);
@@ -461,7 +461,7 @@ void optflow_ADNS3080_captureFrame(void) {
 
 	sys_time_usleep(10); //can we skip this? does the downlink send action take enough time? @todo check with scope
 
-	DOWNLINK_SEND_OFLOW_FRAMECAP(DefaultChannel,90,frame);
+	//DOWNLINK_SEND_OFLOW_FRAMECAP(DefaultChannel,90,frame);
 
 	return;
 }

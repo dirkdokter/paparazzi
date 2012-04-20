@@ -16,7 +16,8 @@
       <message name="BOOZ2_CAM"              period="1."/>
       <message name="GPS_INT"                period=".5"/>
       <message name="INS"                    period=".25"/>
-      <message name="AHRS_REF_QUAT"          period=".25"/> <!-- sw/in_progess/python/attitude_viz_non_rot.py-->	
+      <message name="AHRS_REF_QUAT"          period=".25"/> <!-- sw/in_progess/python/attitude_viz_non_rot.py-->
+      <!--<message name="OFLOW_DATA"             period=".25"/>	-->
     </mode>
 
     <mode name="ppm">

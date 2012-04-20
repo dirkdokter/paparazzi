@@ -1,0 +1,13 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="opticflow_ADNS3080" dir="opticflow">
+  <header>
+    <file name="opticflow_ADNS3080.h"/>
+  </header>
+  <init fun="optflow_ADNS3080_init()"/>
+  <periodic fun="optflow_ADNS3080_periodic()" freq="100" autorun="TRUE"/>
+  <makefile target="ap">
+    <file name="opticflow_ADNS3080.c"/>
+    <define name="USE_OPTFLOW_ADNS3080"/>
+  </makefile>
+</module>
