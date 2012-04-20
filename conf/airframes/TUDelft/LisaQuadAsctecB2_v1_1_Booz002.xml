@@ -253,7 +253,7 @@ AP_MODE_NAV
    <define name="SENSORS_PARAMS" value="&quot;nps_sensors_params_booz2_a1.h&quot;"/>
  </section>
 
- <modules main_freq="60">
+ <modules main_freq="10">
    <load name="gps_ubx_ucenter.xml"/>
    <load name="sonar_maxbotix_MB12XX.xml"/>
    <load name="opticflow_ADNS3080.xml"/>

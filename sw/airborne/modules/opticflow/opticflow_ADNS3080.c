@@ -73,16 +73,16 @@ void optflow_ADNS3080_init( void ) {
 	//sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
 
 	//6469 FPS
-	optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_LOW,OPTFLOW_ADNS3080_FP_LO_6469);
+	/*optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_LOW,OPTFLOW_ADNS3080_FP_LO_6469);
 	sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
 	optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_UP,OPTFLOW_ADNS3080_FP_UP_6469);
-	sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
+	sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);*/
 
 	//2000 FPS
-        //optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_LOW,OPTFLOW_ADNS3080_FP_LO_2000);
-        //sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
-        //optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_UP,OPTFLOW_ADNS3080_FP_UP_2000);
-        //sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
+        optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_LOW,OPTFLOW_ADNS3080_FP_LO_2000);
+        sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
+        optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_UP,OPTFLOW_ADNS3080_FP_UP_2000);
+        sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
 
 	/*optflow_ADNS3080_writeRegister(OPTFLOW_ADNS3080_ADDR_FP_MIN_B_LOW,OPTFLOW_ADNS3080_FP_LO_2000);
 	sys_time_usleep(OPTFLOW_ADNS3080_US_BETWEEN_WRITES);
@@ -132,7 +132,7 @@ void optflow_ADNS3080_spi_conf( void ) {
 	SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
 	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
 	//prescaler 32 is 2MHz SCK... wait... or 64 @FIXME check with scope
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;
 	SPI_InitStructure.SPI_CRCPolynomial = 7;
 	SPI_Init(SPI1, &SPI_InitStructure);
 }
