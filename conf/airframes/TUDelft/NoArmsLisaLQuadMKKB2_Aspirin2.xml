@@ -261,4 +261,12 @@
     <define name="MAG_UPDATE_YAW_ONLY" value="1"/>
   </firmware>
 
+  <firmware name="adns3080_test_progs">
+    <target name="test_adns3080_capture" board="lisa_l_1.0"/>
+    <target name="test_adns3080_hispeed" board="lisa_l_1.0"/>
+  </firmware>
+  <firmware name="lisa_test_progs">
+    <target name="test_servos"   board="lisa_l_1.1"/>  
+  </firmware>
+
 </airframe>
