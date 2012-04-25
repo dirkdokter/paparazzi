@@ -29,11 +29,8 @@
 
 
 #ifdef IMU_ASPIRIN_VERSION_2_0
-#define IMU_MAG_X_CHAN 2
-#define IMU_MAG_Y_CHAN 0
-#define IMU_MAG_Z_CHAN 1
 #if !defined IMU_MAG_X_SIGN & !defined IMU_MAG_Y_SIGN & !defined IMU_MAG_Z_SIGN
-#define IMU_MAG_X_SIGN 1
+#define IMU_MAG_X_SIGN -1
 #define IMU_MAG_Y_SIGN 1
 #define IMU_MAG_Z_SIGN 1
 #endif
@@ -165,7 +162,7 @@ static inline void imu_from_buff(void)
   VECT3_ASSIGN(imu.accel_unscaled, x, y, z);
 #endif
 
-  VECT3_ASSIGN(imu.mag_unscaled, Mx, My, Mz);
+  VECT3_ASSIGN(imu.mag_unscaled, -My, Mz, Mx);
 
   // Is this is new data
 #define MPU_OFFSET_STATUS 1
