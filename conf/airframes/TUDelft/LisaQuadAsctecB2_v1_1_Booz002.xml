@@ -97,8 +97,8 @@
 
  <section name="AUTOPILOT">
    <define name="MODE_MANUAL" value="AP_MODE_ATTITUDE_DIRECT"/>
-   <define name="MODE_AUTO1" value="AP_MODE_HOVER_DIRECT"/>
-   <define name="MODE_AUTO2" value="AP_MODE_HOVER_Z_HOLD"/>
+   <define name="MODE_AUTO1" value="AP_MODE_ATTITUDE_Z_HOLD"/>
+   <define name="MODE_AUTO2" value="AP_MODE_NAV"/>
 <!--    <define name="AUTOPILOT_KILL_WITHOUT_AHRS"  value="TRUE"/>
     <define name="AUTOPILOT_INSTANT_START_WITH_SAFETIES"  value="TRUE"/> -->
  </section>
@@ -253,8 +253,10 @@ AP_MODE_NAV
    <define name="SENSORS_PARAMS" value="&quot;nps_sensors_params_booz2_a1.h&quot;"/>
  </section>
 
- <modules main_freq="60">
+ <modules main_freq="10">
    <load name="gps_ubx_ucenter.xml"/>
+   <load name="sonar_maxbotix_MB12XX.xml"/>
+   <load name="opticflow_ADNS3080.xml"/>
  </modules>
 <!--
  <modules main_freq="512">
