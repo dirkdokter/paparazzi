@@ -103,7 +103,8 @@ void autopilot_periodic(void) {
   }
   else {
     guidance_v_run( autopilot_in_flight );
-    guidance_h_run( autopilot_in_flight );
+    RunOnceEvery(20, guidance_h_run( autopilot_in_flight ));
+//     guidance_h_run( autopilot_in_flight );
     SetCommands(stabilization_cmd,
         autopilot_in_flight, autopilot_motors_on);
   }
@@ -147,6 +148,9 @@ void autopilot_set_mode(uint8_t new_autopilot_mode) {
     case AP_MODE_NAV:
       guidance_h_mode_changed(GUIDANCE_H_MODE_NAV);
       break;
+    case AP_MODE_HOVER_Z_HOLD_OF:
+      guidance_h_mode_changed(GUIDANCE_H_MODE_HOVER_OF);
+      break; 
     default:
       break;
     }
@@ -183,6 +187,9 @@ void autopilot_set_mode(uint8_t new_autopilot_mode) {
     case AP_MODE_NAV:
       guidance_v_mode_changed(GUIDANCE_V_MODE_NAV);
       break;
+    case AP_MODE_HOVER_Z_HOLD_OF:
+      guidance_h_mode_changed(GUIDANCE_V_MODE_HOVER_SONAR);
+      break; 
     default:
       break;
     }

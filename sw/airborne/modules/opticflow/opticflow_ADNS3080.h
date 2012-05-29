@@ -93,6 +93,7 @@
 #define OFS_BUTTER_DEN_2 -1.96529337262269
 #define OFS_BUTTER_DEN_3 +0.96588546056881
 
+#include "math/pprz_algebra_int.h"
 
 void optflow_ADNS3080_init(void);
 void optflow_ADNS3080_spi_conf(void);
@@ -102,6 +103,29 @@ void optflow_ADNS3080_writeSROM(void);
 void optflow_ADNS3080_captureFrame(void);
 
 void optflow_ADNS3080_test(void);
+
+//h2w
+void optflow_ADNS3080_read_OF(void); 
+extern bool_t opticflow_data_available;
+extern int8_t dx,dy;
+extern uint8_t squal;
+extern struct Int8Vect2 OF_p;
+extern struct Int8Vect2 dOF_p;
+extern int8_t ddx;
+extern int8_t ddy;
+extern int8_t dx_prev;
+extern int8_t dy_prev;
+extern float dx_scaled;
+extern float dy_scaled;
+extern float dx_fused;
+extern float dy_fused;
+
+#define OpticFlowEvent(_handler) { \
+  if (opticflow_data_available) { \
+    _handler(); \
+    opticflow_data_available = FALSE; \
+  } \
+}
 
 #endif // USE_OPTFLOW_ADNS3080
 

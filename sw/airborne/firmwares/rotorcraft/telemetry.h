@@ -770,4 +770,40 @@
 #include "generated/settings.h"
 #define PERIODIC_SEND_DL_VALUE(_trans, _dev) PeriodicSendDlValue(_trans, _dev)
 
+#if USE_OPTFLOW_ADNS3080
+#define PERIODIC_SEND_OFLOW_DATA(_trans, _dev) {				\
+    DOWNLINK_SEND_OFLOW_DATA(_trans, _dev,					\
+                &dx,		\
+                &dy,		\
+                &squal);		\
+  }
+#else
+#define PERIODIC_SEND_OFLOW_DATA(_trans, _dev) {}
+#endif
+// dx, dy, squal need to be declared as a global variables
+
+#ifdef GUIDANCE_H_C
+#include "modules/opticflow/opticflow_ADNS3080_Sonar.c"
+#include "firmwares/rotorcraft/guidance/guidance_h.h"
+#define PERIODIC_SEND_GUIDANCE_COMMANDS(_trans, _dev) {				\
+    DOWNLINK_SEND_GUIDANCE_COMMANDS(_trans, _dev,					\
+                &guidance_h_command_earth.x,		\
+                &guidance_h_command_earth.y,		\
+                &guidance_h_command_body.phi,		\
+                &guidance_h_command_body.theta,	\
+                &guidance_h_command_body.psi);		\
+  }
+
+#define PERIODIC_SEND_GUIDANCE_OF(_trans, _dev) {				\
+    DOWNLINK_SEND_GUIDANCE_OF(_trans, _dev,					\
+                &OF_p.x,		\
+                &OF_p.y,		\
+                &dOF_p.x,		\
+                &dOF_p.y);		\
+  }
+#else
+#define PERIODIC_SEND_GUIDANCE_OF(_trans, _dev) {}
+#define PERIODIC_SEND_GUIDANCE_COMMANDS(_trans, _dev) {}
+#endif
+
 #endif /* TELEMETRY_H */

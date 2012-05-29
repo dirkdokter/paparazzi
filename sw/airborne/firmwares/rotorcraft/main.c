@@ -34,6 +34,8 @@
 #include "subsystems/datalink/datalink.h"
 #include "subsystems/settings.h"
 #include "subsystems/datalink/xbee.h"
+#include "messages.h"
+#include "mcu_periph/uart.h"
 
 #include "firmwares/rotorcraft/commands.h"
 #include "firmwares/rotorcraft/actuators.h"
@@ -73,7 +75,6 @@ static inline void on_baro_abs_event( void );
 static inline void on_baro_dif_event( void );
 static inline void on_gps_event( void );
 static inline void on_mag_event( void );
-
 
 tid_t main_periodic_tid; ///< id for main_periodic() timer
 tid_t failsafe_tid;      ///< id for failsafe_check() timer

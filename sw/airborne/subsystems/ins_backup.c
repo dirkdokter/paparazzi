@@ -44,10 +44,6 @@
 #include <stdio.h>
 #endif
 
-//h2w: opticflow modules
-#if USE_OPTFLOW_ADNS3080
-#include "modules/opticflow/opticflow_ADNS3080.h"
-#endif
 
 #include "math/pprz_geodetic_int.h"
 
@@ -58,13 +54,6 @@ struct LtpDef_i  ins_ltp_def;
          bool_t  ins_ltp_initialised;
 struct NedCoor_i ins_gps_pos_cm_ned;
 struct NedCoor_i ins_gps_speed_cm_s_ned;
-
-// h2w: Opticflow horizontal positions and speeds in meters as float
-#if USE_OPTFLOW_ADNS3080 && USE_HFF
-struct FloatVect2 ins_of_pos_m;
-struct FloatVect2 ins_of_speed_m_s;
-#endif
-
 #if USE_HFF
 /* horizontal gps transformed to NED in meters as float */
 struct FloatVect2 ins_gps_pos_m_ned;
@@ -323,26 +312,6 @@ void ins_update_gps(void) {
     INT32_VECT3_ENU_OF_NED(ins_enu_accel, ins_ltp_accel);
   }
 #endif /* USE_GPS */
-}
-
-void ins_update_opticflow(void) {
-#if USE_OPTFLOW_ADNS3080
-#if USE_HFF
-    ins_of_pos_m.x = x_of_m;
-    ins_of_pos_m.y = y_of_m;
-    ins_of_speed_m_s.x = dx_fused;
-    ins_of_speed_m_s.y = dy_fused;
-
-    b2_hff_update_opticflow(); //hf_float_h2w.c
-    
-#else 
-
-//     ins_ltp_pos.x = ofs_itgr_x;
-//     ins_ltp_pos.y = ofs_itgr_x;
-    ins_ltp_speed.x = (int32_t)dx;
-    ins_ltp_speed.y = (int32_t)dy;
-#endif
-#endif /* USE_OPTFLOW_ADNS3080 */
 }
 
 void ins_update_sonar() {

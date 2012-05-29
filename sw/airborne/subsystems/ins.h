@@ -75,6 +75,7 @@ extern void ins_realign_v(float z);
 extern void ins_propagate( void );
 extern void ins_update_baro( void );
 extern void ins_update_gps( void );
+extern void ins_update_opticflow(void);//h2w
 extern void ins_update_sonar( void );
 extern void ins_update_module_altimeter( void );
 

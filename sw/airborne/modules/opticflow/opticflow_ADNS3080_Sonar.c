@@ -19,6 +19,11 @@
 #include "subsystems/datalink/downlink.h"
 #include "mcu_periph/sys_time.h"
 
+//h2w
+#include "modules/sonar/sonar_maxbotix_MB12XX_PWM.h"
+#include "subsystems/imu.h"
+#include "subsystems/ahrs.h"
+#include "math/pprz_algebra.h"
 
 #include <stm32/gpio.h>
 #include <stm32/misc.h>
@@ -50,7 +55,42 @@ int32_t ofs_itgr_y = 0;
 
 uint8_t isWritingSROM = 0;
 
+//h2w
+bool_t opticflow_data_available;
+uint8_t squal;
+int8_t dx,dy;
+#define FORTYFIVE_DEGREES 0.78539816
+
+float dx_scaled = 0;
+float dy_scaled = 0;
+float dx_fused = 0;
+float dy_fused = 0;
+const float conv_factor = 0.006156; // conv_factor = (1.0 / (float)(num_pixels * scaler)) * 2.0 * tan(field_of_view / 2.0);
+				     // num_pixels=30 pixels; scaler=1.1; FOV=11.6 deg=0.202458rad
+const float radians_to_pixels = 162.9968; //radians_to_pixels = (num_pixels * scaler) / field_of_view;
+float exp_change_x = 0;
+float exp_change_y = 0;
+float change_x = 0;
+float change_y = 0;
+float diff_roll = 0;
+float diff_pitch = 0;
+float roll = 0;
+float pitch = 0;
+float _last_roll = 0;
+float _last_pitch = 0;
+float x_of_m = 0.0;
+float y_of_m = 0.0;
+
+int8_t dx_prev = 0;
+int8_t dy_prev = 0;
+int8_t ddx = 0;
+int8_t ddy = 0;
+
+struct Int8Vect2 OF_p;
+struct Int8Vect2 dOF_p;
+
 void optflow_ADNS3080_init( void ) {
+	opticflow_data_available = FALSE;
 	optflow_ADNS3080_spi_conf();
 	isWritingSROM = 1;
 	optflow_ADNS3080_writeSROM();
@@ -144,9 +184,6 @@ void optflow_ADNS3080_periodic( void ) {
 	}
 	//OfSelect();
 
-	uint8_t squal;
-	int8_t dx,dy;
-
 
 	      //ignore the motion register, we don' t need it
 	      SPI_I2S_ReceiveData(SPI1);
@@ -161,7 +198,7 @@ void optflow_ADNS3080_periodic( void ) {
 	      while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
 	      SPI_I2S_SendData(SPI1, 0x00);
 	      while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
-	      dy = SPI_I2S_ReceiveData(SPI1);
+	      dy = -SPI_I2S_ReceiveData(SPI1);
 
 	      //and the surface quality
 	      while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
@@ -195,10 +232,44 @@ void optflow_ADNS3080_periodic( void ) {
               ofs_filter_val_dy_prev = ofs_filter_val_dy;
 
               ofs_itgr_x += dx;
-              ofs_itgr_x += dy;
+              ofs_itgr_y += dy;
+	     
+	      //h2w 
+// 	      RunOnceEvery(50,DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, DefaultDevice, &dx, &dy,&squal););
+	      DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, DefaultDevice, &dx, &dy,&squal);
 
-	     DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, DefaultDevice, &dx,&dy,&squal);
-	     //DOWNLINK_SEND_FILTER2(DefaultChannel, &ofs_itgr_x,&ofs_itgr_y,0,0,0,0);
+	      
+// 	      EULERS_FLOAT_OF_BFP(ahrs_float.ltp_to_body_euler,ahrs.ltp_to_body_euler);
+// 	      roll = ahrs_float.ltp_to_body_euler.phi;
+// 	      pitch = ahrs_float.ltp_to_body_euler.theta;
+// 	      
+// 	      diff_roll     = roll  - _last_roll;
+// 	      diff_pitch    = pitch - _last_pitch;
+
+	// only update position if surface quality is good and angle is not over 45 degrees
+//         if( squal >= 10 && fabs(roll) <= FORTYFIVE_DEGREES && fabs(pitch) <= FORTYFIVE_DEGREES ) {
+// 	      exp_change_x = -diff_pitch*radians_to_pixels;
+// 	      exp_change_y = diff_roll*radians_to_pixels;
+// 
+// 	      change_x = dx - exp_change_x;
+// 	      change_y = dy - exp_change_y;
+// 	      
+// 	      dx_scaled = (float)dx*sonar_filtered*conv_factor;	
+// 	      dy_scaled = -(float)dy*sonar_filtered*conv_factor;
+// 	      dx_fused = (float)change_x*sonar_filtered*conv_factor;	
+// 	      dy_fused = -(float)change_y*sonar_filtered*conv_factor;
+// 	      
+// 	      x_of_m += dx_fused;
+// 	      y_of_m += dy_fused;
+// 	}
+// 	      _last_roll = roll;
+// 	      _last_pitch = pitch;
+// 	      
+ 	      opticflow_data_available = TRUE;
+//h2w
+// 	      int8_t ab = 0;
+	     //DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, DefaultDevice, &dx, &dy,&squal, &ab,&ab,&ab,&ab,&ab,&ab);
+	    // DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, DefaultDevice, &dx, &dy,&squal, &dx_scaled,&dy_scaled,&dx_fused,&dy_fused,&diff_pitch,&diff_roll);
 
 
 	//dx      		 = (int8_t)optflow_ADNS3080_readRegister(OPTFLOW_ADNS3080_ADDR_DX);
@@ -316,8 +387,8 @@ void optflow_ADNS3080_test( void ) {
 		return;
 	}
 
-	uint8_t prodId,revId,motionReg,isMotion,motionOverflow,motionResolution,squal,srom_id;
-	int8_t dx,dy;
+	uint8_t prodId,revId,motionReg,isMotion,motionOverflow,motionResolution,srom_id;
+
 
 	prodId 			 = optflow_ADNS3080_readRegister(OPTFLOW_ADNS3080_ADDR_PROD_ID);
 	revId 			 = optflow_ADNS3080_readRegister(OPTFLOW_ADNS3080_ADDR_REV_ID);
@@ -461,8 +532,23 @@ void optflow_ADNS3080_captureFrame(void) {
 	sys_time_usleep(10); //can we skip this? does the downlink send action take enough time? @todo check with scope
 
 	//DOWNLINK_SEND_OFLOW_FRAMECAP(DefaultChannel,90,frame);
-
+	
 	return;
 }
 
+//read the optical flows and compute their derivatives
+void optflow_ADNS3080_read_OF(void) {
+        optflow_ADNS3080_periodic();
+	VECT2_ASSIGN(OF_p,dx,dy);
+	ddx = dx-dx_prev;
+	ddy = dy-dy_prev;
+	
+	VECT2_ASSIGN(dOF_p,ddx,ddy);
+	dx_prev = dx;
+	dy_prev = dy;
+	
+// 	DOWNLINK_SEND_GUIDANCE_OF(DefaultChannel, DefaultDevice, &dx, &dy, &ddx,&ddy)
+// 	RunOnceEvery(10,DOWNLINK_SEND_GUIDANCE_OF(DefaultChannel, DefaultDevice, &(OF_p.x), &(OF_p.y), &(dOF_p.x),&(dOF_p.y)));
+//  	DOWNLINK_SEND_GUIDANCE_OF(DefaultChannel, DefaultDevice, &(OF_p.x), &(OF_p.y), &(dOF_p.x),&(dOF_p.y));
+}
 

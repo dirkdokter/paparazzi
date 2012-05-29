@@ -7,6 +7,7 @@
     <file name="sonar_maxbotix_MB12XX_PWM.h"/>
   </header>
   <init fun="maxbotix12_init()"/>
+   <event fun="SonarEvent(ins_update_sonar)"/>
   <makefile>
     <file name="sonar_maxbotix_MB12XX_PWM.c"/>
     <define name="USE_TIM1_IRQ"/>
