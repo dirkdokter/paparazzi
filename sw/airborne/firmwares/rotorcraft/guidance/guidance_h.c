@@ -72,7 +72,7 @@ int32_t guidance_h_again;
 //h2w
 uint8_t guidance_h_of_dgain;
 uint8_t guidance_h_of_ddgain;
-#define INT8_OF_FRAC 5
+#define INT8_OF_FRAC 2
 //INT8_OF_FRAC supposed to be 5
 
 /* warn if some gains are still negative */
@@ -394,12 +394,13 @@ static inline void guidance_h_traj_run_OF(bool_t in_flight) {
 
   /* run PID */
   guidance_h_command_earth.x =
-    ((guidance_h_of_dgain * guidance_h_OF_err.x) >>(INT8_OF_FRAC))
-    +((guidance_h_of_ddgain * guidance_h_dOF_err.x) >>(INT8_OF_FRAC)) ;
+        (((int32_t)guidance_h_of_dgain * guidance_h_OF_err.x)
+        +((int32_t)guidance_h_of_ddgain * guidance_h_dOF_err.x)) >> INT8_OF_FRAC;
 
   guidance_h_command_earth.y =
-    ((guidance_h_of_dgain * guidance_h_OF_err.y) >>(INT8_OF_FRAC))
-    +((guidance_h_of_ddgain * guidance_h_dOF_err.y) >>(INT8_OF_FRAC)) ;
+          (((int32_t)guidance_h_of_dgain * guidance_h_OF_err.y)
+          +((int32_t)guidance_h_of_ddgain * guidance_h_dOF_err.y)) >> INT8_OF_FRAC;
+
 
   VECT2_STRIM(guidance_h_command_earth, -TRAJ_MAX_BANK, TRAJ_MAX_BANK);
 
