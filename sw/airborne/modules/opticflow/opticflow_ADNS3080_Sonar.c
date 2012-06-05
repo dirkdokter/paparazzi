@@ -59,6 +59,8 @@ uint8_t isWritingSROM = 0;
 bool_t opticflow_data_available;
 uint8_t squal;
 int8_t dx,dy;
+int8_t dx_filtered = 0;
+int8_t dy_filtered = 0;
 #define FORTYFIVE_DEGREES 0.78539816
 
 float dx_scaled = 0;
@@ -198,7 +200,7 @@ void optflow_ADNS3080_periodic( void ) {
 	      while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
 	      SPI_I2S_SendData(SPI1, 0x00);
 	      while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
-	      dy = -SPI_I2S_ReceiveData(SPI1);
+	      dy = SPI_I2S_ReceiveData(SPI1);
 
 	      //and the surface quality
 	      while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
@@ -235,10 +237,7 @@ void optflow_ADNS3080_periodic( void ) {
               ofs_itgr_y += dy;
 	     
 	      //h2w 
-// 	      RunOnceEvery(50,DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, DefaultDevice, &dx, &dy,&squal););
-	      DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, DefaultDevice, &dx, &dy,&squal);
 
-	      
 // 	      EULERS_FLOAT_OF_BFP(ahrs_float.ltp_to_body_euler,ahrs.ltp_to_body_euler);
 // 	      roll = ahrs_float.ltp_to_body_euler.phi;
 // 	      pitch = ahrs_float.ltp_to_body_euler.theta;
@@ -251,13 +250,21 @@ void optflow_ADNS3080_periodic( void ) {
 // 	      exp_change_x = -diff_pitch*radians_to_pixels;
 // 	      exp_change_y = diff_roll*radians_to_pixels;
 // 
-// 	      change_x = dx - exp_change_x;
-// 	      change_y = dy - exp_change_y;
+// 	      change_x = ofs_filter_val_dx - exp_change_x;
+// 	      change_y = ofs_filter_val_dy - exp_change_y;
 // 	      
-// 	      dx_scaled = (float)dx*sonar_filtered*conv_factor;	
-// 	      dy_scaled = -(float)dy*sonar_filtered*conv_factor;
-// 	      dx_fused = (float)change_x*sonar_filtered*conv_factor;	
-// 	      dy_fused = -(float)change_y*sonar_filtered*conv_factor;
+     	  dx_scaled = -ofs_filter_val_dy;
+     	  dy_scaled = -ofs_filter_val_dx;
+
+//#ifdef SONAR_MAXBOTIX12_H
+// 	      dx_scaled = ofs_filter_val_dx*sonar_filtered*conv_factor;
+// 	      dy_scaled = ofs_filter_val_dy*sonar_filtered*conv_factor;
+//#else
+// 	      dx_scaled = ofs_filter_val_dx;
+// 	      dy_scaled = ofs_filter_val_dy;
+//#endif
+// 	      dx_fused = (int8_t)change_x*sonar_filtered*conv_factor;
+// 	      dy_fused = (int8_t)change_y*sonar_filtered*conv_factor;
 // 	      
 // 	      x_of_m += dx_fused;
 // 	      y_of_m += dy_fused;
@@ -265,6 +272,10 @@ void optflow_ADNS3080_periodic( void ) {
 // 	      _last_roll = roll;
 // 	      _last_pitch = pitch;
 // 	      
+ 	     // 	  RunOnceEvery(50,DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, DefaultDevice, &dx, &dy,&squal););
+ 	     //	      DOWNLINK_SEND_OFLOW_DATA(DefaultChannel, DefaultDevice, &dx, &dy, &squal);
+ 	      DOWNLINK_SEND_OFLOW_FILTERED(DefaultChannel, DefaultDevice, &dx_scaled, &dy_scaled, &squal);
+
  	      opticflow_data_available = TRUE;
 //h2w
 // 	      int8_t ab = 0;
@@ -538,14 +549,16 @@ void optflow_ADNS3080_captureFrame(void) {
 
 //read the optical flows and compute their derivatives
 void optflow_ADNS3080_read_OF(void) {
-        optflow_ADNS3080_periodic();
-	VECT2_ASSIGN(OF_p,dx,dy);
-	ddx = dx-dx_prev;
-	ddy = dy-dy_prev;
+    optflow_ADNS3080_periodic();
+    dx_filtered = (int8_t)dx_scaled;
+    dy_filtered = (int8_t)dy_scaled;
+	VECT2_ASSIGN(OF_p,dx_filtered,dy_filtered);
+	ddx = dx_filtered-dx_prev;
+	ddy = dy_filtered-dy_prev;
 	
 	VECT2_ASSIGN(dOF_p,ddx,ddy);
-	dx_prev = dx;
-	dy_prev = dy;
+	dx_prev = dx_filtered;
+	dy_prev = dy_filtered;
 	
 // 	DOWNLINK_SEND_GUIDANCE_OF(DefaultChannel, DefaultDevice, &dx, &dy, &ddx,&ddy)
 // 	RunOnceEvery(10,DOWNLINK_SEND_GUIDANCE_OF(DefaultChannel, DefaultDevice, &(OF_p.x), &(OF_p.y), &(dOF_p.x),&(dOF_p.y)));

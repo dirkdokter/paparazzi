@@ -368,6 +368,7 @@ static inline void guidance_h_traj_run(bool_t in_flight) {
 
 //h2w
 static inline void guidance_h_traj_run_OF(bool_t in_flight) {
+#ifdef USE_OPTFLOW_ADNS3080
   optflow_ADNS3080_read_OF(); //read the optical flows dx dy (OF_p) and compute their derivatives ddx ddy (dOF_p)in pixels
 
 //   DOWNLINK_SEND_GUIDANCE_OF(DefaultChannel, DefaultDevice, &(OF_p.x), &(OF_p.y), &(dOF_p.x),&(dOF_p.y));
@@ -375,6 +376,10 @@ static inline void guidance_h_traj_run_OF(bool_t in_flight) {
 
   /* compute dx dy error    */
   VECT2_DIFF(guidance_h_OF_err, guidance_h_OF_sp, OF_p);
+
+  //TODO: guidance_h_OF_err to int32_t when OF_p is corrected for altitude effect ??
+  //as MAX_SPEED_ERR is int32_t (16*(1<<19)) = +/- 8 388 608
+
   /* saturate it               */
   VECT2_STRIM(guidance_h_OF_err, -MAX_SPEED_ERR, MAX_SPEED_ERR);
 
@@ -431,7 +436,7 @@ static inline void guidance_h_traj_run_OF(bool_t in_flight) {
   INT32_QUAT_OF_EULERS(stab_att_sp_quat, stab_att_sp_euler);
   INT32_QUAT_WRAP_SHORTEST(stab_att_sp_quat);
 #endif /* STABILISATION_ATTITUDE_TYPE_QUAT */
-
+#endif
 }
 
 static inline void guidance_h_hover_enter(void) {
@@ -446,7 +451,7 @@ static inline void guidance_h_hover_enter(void) {
 }
 //h2w
 static inline void guidance_h_hover_enter_OF(void) {
-
+#ifdef USE_OPTFLOW_ADNS3080
   INT_VECT2_ZERO(guidance_h_OF_sp);
   INT_VECT2_ZERO(guidance_h_dOF_sp);
   
@@ -454,7 +459,7 @@ static inline void guidance_h_hover_enter_OF(void) {
   reset_psi_ref_from_body();
 
   INT_VECT2_ZERO(guidance_h_OF_err_sum);
-
+#endif
 }
 
 static inline void guidance_h_nav_enter(void) {

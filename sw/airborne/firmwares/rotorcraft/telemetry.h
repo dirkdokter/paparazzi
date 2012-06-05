@@ -777,8 +777,16 @@
                 &dy,		\
                 &squal);		\
   }
+
+#define PERIODIC_SEND_OFLOW_FILTERED(_trans, _dev) {				\
+    DOWNLINK_SEND_OFLOW_FILTERED(_trans, _dev,					\
+                &ofs_filter_val_dx,		\
+                &ofs_filter_val_dy,		\
+                &squal);		\
+  }
 #else
 #define PERIODIC_SEND_OFLOW_DATA(_trans, _dev) {}
+#define PERIODIC_SEND_OFLOW_FILTERED(_trans, _dev) {}
 #endif
 // dx, dy, squal need to be declared as a global variables
 

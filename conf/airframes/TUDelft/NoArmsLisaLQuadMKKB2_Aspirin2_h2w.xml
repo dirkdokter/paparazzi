@@ -31,8 +31,8 @@
   </section>
 
   <section name="SUPERVISION" prefix="SUPERVISION_">
-    <define name="MIN_MOTOR" value="3"/>
-    <define name="MAX_MOTOR" value="200"/>
+    <define name="MIN_MOTOR" value="10"/>
+    <define name="MAX_MOTOR" value="230"/>
     <define name="TRIM_A" value="0"/>
     <define name="TRIM_E" value="0"/>
     <define name="TRIM_R" value="0"/>
@@ -95,7 +95,8 @@
     <define name="MODE_MANUAL" value="AP_MODE_ATTITUDE_DIRECT"/>
     <!--<define name="MODE_AUTO1"  value="AP_MODE_HOVER_Z_HOLD"/>-->
     <define name="MODE_AUTO1"  value="AP_MODE_ATTITUDE_Z_HOLD"/>
-    <define name="MODE_AUTO2"  value="AP_MODE_HOVER_Z_HOLD_OF"/>
+    <define name="MODE_AUTO2"  value="AP_MODE_ATTITUDE_DIRECT"/>
+    <!--AP_MODE_HOVER_Z_HOLD_OF-->
     <!--<define name="AUTOPILOT_INSTANT_START_WITH_SAFETIES"  value="TRUE"/>-->
   </section>
 
@@ -147,22 +148,22 @@
     <define name="REF_MAX_RDOT" value="1800."  unit="deg"/>
 
     <!-- feedback -->
-    <define name="PHI_PGAIN"  value="1400"/>
-    <define name="PHI_DGAIN"  value="600"/>
-    <define name="PHI_IGAIN"  value="200"/>
+    <define name="PHI_PGAIN"  value="489"/>
+    <define name="PHI_DGAIN"  value="112"/>
+    <define name="PHI_IGAIN"  value="0"/>
 
-    <define name="THETA_PGAIN"  value="1400"/>
-    <define name="THETA_DGAIN"  value="600"/>
-    <define name="THETA_IGAIN"  value="200"/>
+    <define name="THETA_PGAIN"  value="484"/>
+    <define name="THETA_DGAIN"  value="118"/>
+    <define name="THETA_IGAIN"  value="0"/>
 
-    <define name="PSI_PGAIN"  value="900"/>
-    <define name="PSI_DGAIN"  value="500"/>
-    <define name="PSI_IGAIN"  value="55"/>
+    <define name="PSI_PGAIN"  value="630"/>
+    <define name="PSI_DGAIN"  value="400"/>
+    <define name="PSI_IGAIN"  value="0"/>
 
     <!-- feedforward -->
-    <define name="PHI_DDGAIN"   value="300"/>
-    <define name="THETA_DDGAIN" value="300"/>
-    <define name="PSI_DDGAIN"   value="300"/>
+    <define name="PHI_DDGAIN"   value="216"/>
+    <define name="THETA_DDGAIN" value="189"/>
+    <define name="PSI_DDGAIN"   value="100"/>
   </section>
 
     <!--Rotterdam
@@ -195,15 +196,15 @@
     <define name="MAX_ERR_ZD"  value="SPEED_BFP_OF_REAL( 10.)"/>
     <define name="MAX_SUM_ERR" value="2000000"/>
 
-    <define name="HOVER_KP"     value="550"/>
-    <define name="HOVER_KD"     value="300"/>
-    <define name="HOVER_KI"     value="10"/>
+    <define name="HOVER_KP"     value="1970"/>
+    <define name="HOVER_KD"     value="180"/>
+    <define name="HOVER_KI"     value="5"/>
 
     <!-- 1.5m/s for full stick : BOOZ_SPEED_I_OF_F(1.5) / (MAX_PPRZ/2) -->
     <define name="RC_CLIMB_COEF" value ="163"/>
     <!-- BOOZ_SPEED_I_OF_F(1.5) * 20% -->
     <define name="RC_CLIMB_DEAD_BAND" value ="160000"/>
-   <define name="NOMINAL_HOVER_THROTTLE" value ="0.59"/>
+   <define name="NOMINAL_HOVER_THROTTLE" value ="0.47"/>
   </section>
 
   <section name="GUIDANCE_H" prefix="GUIDANCE_H_">
@@ -211,8 +212,8 @@
     <define name="DGAIN" value="100"/>
     <define name="IGAIN" value="15"/>
     <define name="AGAIN" value="0"/>
-    <define name="OF_DGAIN" value="50"/>
-    <define name="OF_DDGAIN" value="100"/>
+    <define name="OF_DGAIN" value="67"/>
+    <define name="OF_DDGAIN" value="118"/>
   </section>
 
   <section name="MISC">
@@ -226,7 +227,7 @@
   </section>
 
  <modules main_freq="60">
-   <load name="gps_ubx_ucenter.xml"/>
+   <load name="sys_mon.xml"/>
    <load name="sonar_maxbotix_MB12XX.xml"/>
    <load name="opticflow_ADNS3080.xml"/>
  </modules>
@@ -269,4 +270,11 @@
     <define name="MAG_UPDATE_YAW_ONLY" value="1"/>
   </firmware>
 
+  <firmware name="adns3080_test_progs">
+    <target name="test_adns3080_capture" board="lisa_l_1.0"/>
+    <target name="test_adns3080_hispeed" board="lisa_l_1.0"/>
+  </firmware>
+  <firmware name="lisa_test_progs">
+    <target name="test_servos"   board="lisa_l_1.1"/>  
+  </firmware>
 </airframe>

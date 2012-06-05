@@ -7,7 +7,7 @@
   </header>
   <init fun="optflow_ADNS3080_init()"/>
   <!--<periodic fun="optflow_ADNS3080_periodic()" freq="100" autorun="TRUE"/>-->
-    <event fun="OpticFlowEvent(ins_update_opticflow)"/>
+    <!--<event fun="OpticFlowEvent(ins_update_opticflow)"/>-->
   <makefile target="ap">
     <file name="opticflow_ADNS3080_Sonar.c"/>
     <define name="USE_OPTFLOW_ADNS3080"/>

@@ -86,12 +86,12 @@
 #define OFS_BUTTER_DEN_3 +0.412801598096189
 */
 
-#define OFS_BUTTER_NUM_1 +0.00014802198653
-#define OFS_BUTTER_NUM_2 +0.00029604397306
-#define OFS_BUTTER_NUM_3 +0.00014802198653185
+#define OFS_BUTTER_NUM_1 +0.139939286866852
+#define OFS_BUTTER_NUM_2 +0.279878573733703
+#define OFS_BUTTER_NUM_3 +0.139939286866852
 //warning, ACCEL_BUTTER_DEN_1 is always one for this filter, so it is omitted here.
-#define OFS_BUTTER_DEN_2 -1.96529337262269
-#define OFS_BUTTER_DEN_3 +0.96588546056881
+#define OFS_BUTTER_DEN_2 -0.699738028273365
+#define OFS_BUTTER_DEN_3 +0.259495175740772
 
 #include "math/pprz_algebra_int.h"
 
@@ -108,6 +108,7 @@ void optflow_ADNS3080_test(void);
 void optflow_ADNS3080_read_OF(void); 
 extern bool_t opticflow_data_available;
 extern int8_t dx,dy;
+extern int8_t dx_filtered, dy_filtered;
 extern uint8_t squal;
 extern struct Int8Vect2 OF_p;
 extern struct Int8Vect2 dOF_p;

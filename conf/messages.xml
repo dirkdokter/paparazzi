@@ -1809,8 +1809,12 @@
   <field name="dy_scaled" type="int32" alt_unit="m"  alt_unit_coef="0.0039063"  />-->
   <field name="squal" type="uint8" alt_unit="real" alt_unit_coef=" #features"/>
  </message>
-  <!--226 is free -->
 
+ <message name="OFLOW_FILTERED" id="226">
+  <field name="dx_filtered" type="float" alt_unit="pixel" />
+  <field name="dy_filtered" type="float" alt_unit="pixel" />
+  <field name="squal" type="uint8" alt_unit="real" alt_unit_coef=" #features"/>
+ </message>
  
  
 
