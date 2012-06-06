@@ -32,7 +32,7 @@
 
   <section name="SUPERVISION" prefix="SUPERVISION_">
     <define name="MIN_MOTOR" value="10"/>
-    <define name="MAX_MOTOR" value="230"/>
+    <define name="MAX_MOTOR" value="256"/>
     <define name="TRIM_A" value="0"/>
     <define name="TRIM_E" value="0"/>
     <define name="TRIM_R" value="0"/>
