@@ -148,17 +148,17 @@
     <define name="REF_MAX_RDOT" value="1800."  unit="deg"/>
 
     <!-- feedback -->
-    <define name="PHI_PGAIN"  value="489"/>
-    <define name="PHI_DGAIN"  value="112"/>
-    <define name="PHI_IGAIN"  value="0"/>
+    <define name="PHI_PGAIN"  value="1800"/>
+    <define name="PHI_DGAIN"  value="220"/>
+    <define name="PHI_IGAIN"  value="200"/>
 
-    <define name="THETA_PGAIN"  value="484"/>
-    <define name="THETA_DGAIN"  value="118"/>
-    <define name="THETA_IGAIN"  value="0"/>
+    <define name="THETA_PGAIN"  value="1800"/>
+    <define name="THETA_DGAIN"  value="220"/>
+    <define name="THETA_IGAIN"  value="200"/>
 
-    <define name="PSI_PGAIN"  value="630"/>
-    <define name="PSI_DGAIN"  value="400"/>
-    <define name="PSI_IGAIN"  value="0"/>
+    <define name="PSI_PGAIN"  value="900"/>
+    <define name="PSI_DGAIN"  value="500"/>
+    <define name="PSI_IGAIN"  value="55"/>
 
     <!-- feedforward -->
     <define name="PHI_DDGAIN"   value="216"/>
@@ -227,9 +227,9 @@
   </section>
 
  <modules main_freq="60">
-   <load name="sys_mon.xml"/>
+   <!--<load name="sys_mon.xml"/>-->
    <load name="sonar_maxbotix_MB12XX.xml"/>
-   <load name="opticflow_ADNS3080.xml"/>
+   <!--<load name="opticflow_ADNS3080.xml"/>-->
  </modules>
  
 <!--
