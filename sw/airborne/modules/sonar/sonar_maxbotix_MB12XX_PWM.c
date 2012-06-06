@@ -106,7 +106,7 @@ maxbotix12_init(void)
   /* Enable the TIM3 global Interrupt */
   NVIC_InitTypeDef NVIC_InitStructure;
   NVIC_InitStructure.NVIC_IRQChannel = SONAR_MAXBOTIX12_IRQ_CHANNEL;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 16;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
@@ -114,7 +114,7 @@ maxbotix12_init(void)
   /* we can use TI2FP2 because it is bound to TIM channel 2 , which we are using */
   TIM_SelectInputTrigger(SONAR_MAXBOTIX12_TIM, SONAR_MAXBOTIX12_TIM_TS);
 
-  TIM_SelectSlaveMode(SONAR_MAXBOTIX12_TIM, TIM_SlaveMode_Reset);
+  TIM_SelectSlaveMode(SONAR_MAXBOTIX12_TIM, TIM_SlaveMode_);
   TIM_SelectMasterSlaveMode(SONAR_MAXBOTIX12_TIM, TIM_MasterSlaveMode_Enable);
 
   /* TIM3 enable counter */
@@ -185,8 +185,8 @@ void SONAR_MAXBOTIX12_IRQ_HANDLER(void)
       //sonar_filtered = conv_factor_cm*sonar_filter_val;
       //DOWNLINK_SEND_VFF(DefaultChannel, &alt_mm_flt,0,0,0,0,0,0);
       //DOWNLINK_SEND_INS_Z(DefaultChannel, DefaultDevice,&sonar_filtered,&sonar_spike_cnt,0,0);
-      DOWNLINK_SEND_SONAR_Z(DefaultChannel, DefaultDevice, &sonar_meas, &sonar_filtered); //h2w
     }
+  DOWNLINK_SEND_SONAR_Z(DefaultChannel, DefaultDevice, &sonar_meas, &sonar_filtered); //h2w
 }
 
 bool_t SonarAlmostGroundDetect(void) {

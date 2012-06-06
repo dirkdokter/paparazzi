@@ -234,7 +234,7 @@ void guidance_h_run(bool_t  in_flight) {
 
   case GUIDANCE_H_MODE_HOVER_OF://h2w
     guidance_h_update_reference(FALSE);
-    guidance_h_traj_run_OF(in_flight);
+    RunOnceEvery(20, {guidance_h_traj_run_OF(in_flight);});
     stabilization_attitude_run(in_flight);
     break;
     

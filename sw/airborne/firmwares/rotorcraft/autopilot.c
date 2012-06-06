@@ -87,7 +87,7 @@ void autopilot_init(void) {
 void autopilot_periodic(void) {
 
   RunOnceEvery(NAV_PRESCALER, nav_periodic_task());
-#ifdef FAILSAFE_GROUND_DETECT
+#ifdef FAILSAFE_GROUND_DETECTRunOnceEvery(20,
   if (autopilot_mode == AP_MODE_FAILSAFE && autopilot_detect_ground) {
     autopilot_set_mode(AP_MODE_KILL);
     autopilot_detect_ground = FALSE;
@@ -103,8 +103,8 @@ void autopilot_periodic(void) {
   }
   else {
     guidance_v_run( autopilot_in_flight );
-    RunOnceEvery(20, guidance_h_run( autopilot_in_flight ));
-//     guidance_h_run( autopilot_in_flight );
+    //RunOnceEvery(20, guidance_h_run( autopilot_in_flight ));
+    guidance_h_run( autopilot_in_flight );
     SetCommands(stabilization_cmd,
         autopilot_in_flight, autopilot_motors_on);
   }
