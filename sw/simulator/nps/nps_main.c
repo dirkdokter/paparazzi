@@ -112,6 +112,7 @@ static void nps_main_init(void) {
 
 
 static void nps_main_run_sim_step(void) {
+
   //  printf("sim at %f\n", nps_main.sim_time);
 
   nps_autopilot_run_systime_step();

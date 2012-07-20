@@ -2,6 +2,7 @@
 #include <FGJSBBase.h>
 #include <models/FGPropulsion.h>
 #include <models/FGGroundReactions.h>
+#include <models/FGAccelerations.h>
 #include <stdlib.h>
 #include "nps_fdm.h"
 #include "generated/airframe.h"
@@ -34,8 +35,9 @@ struct NpsFdm fdm;
 static FGFDMExec* FDMExec;
 static struct LtpDef_d ltpdef;
 
-void nps_fdm_init(double dt) {
+#define JSBSIM_VERBOSE 1
 
+void nps_fdm_init(double dt) {
   init_jsbsim(dt);
 
   FDMExec->RunIC();
@@ -43,7 +45,6 @@ void nps_fdm_init(double dt) {
   init_ltp();
 
   fetch_state();
-
 }
 
 void nps_fdm_run_step(double* commands) {
@@ -76,6 +77,7 @@ static void fetch_state(void) {
   fdm.time = node->getDoubleValue();
 
   FGPropagate* propagate = FDMExec->GetPropagate();
+  FGAccelerations* accelerations = FDMExec->GetAccelerations();
 
   fdm.on_ground = FDMExec->GetGroundReactions()->GetWOW();
 
@@ -92,7 +94,7 @@ static void fetch_state(void) {
   /* in body frame */
   const FGColumnVector3& fg_body_ecef_vel = propagate->GetUVW();
   jsbsimvec_to_vec(&fdm.body_ecef_vel, &fg_body_ecef_vel);
-  const FGColumnVector3& fg_body_ecef_accel = propagate->GetUVWdot();
+  const FGColumnVector3& fg_body_ecef_accel = accelerations->GetUVWdot();
   jsbsimvec_to_vec(&fdm.body_ecef_accel,&fg_body_ecef_accel);
 
   /* in LTP frame */
@@ -141,7 +143,7 @@ static void fetch_state(void) {
    * rotational speed and accelerations
    */
   jsbsimvec_to_rate(&fdm.body_ecef_rotvel,&propagate->GetPQR());
-  jsbsimvec_to_rate(&fdm.body_ecef_rotaccel,&propagate->GetPQRdot());
+  jsbsimvec_to_rate(&fdm.body_ecef_rotaccel,&accelerations->GetPQRdot());
 
 }
 
@@ -157,8 +159,12 @@ static void init_jsbsim(double dt) {
   FDMExec->Setsim_time(0.);
   FDMExec->Setdt(dt);
 
+#if !JSBSIM_VERBOSE
   FDMExec->DisableOutput();
   FDMExec->SetDebugLevel(0); // No DEBUG messages
+#else
+  FDMExec->SetDebugLevel(6);
+#endif
 
   if ( ! FDMExec->LoadModel( rootdir + "aircraft",
 			     rootdir + "engine",
