@@ -11,7 +11,9 @@
 
   <firmware name="fixedwing">
     <target name="ap" 			board="twog_1.0"/>
-    <target name="sim" 			board="pc"/>
+    <target name="sim" 			board="pc">
+      <subsystem name="fdm"         type="nps"/>
+    </target>
 
     <define name="AGR_CLIMB"/>
     <define name="LOITER_TRIM"/>
@@ -109,7 +111,19 @@
     <define name="ALT_KALMAN_ENABLED" value="TRUE"/>
     <define name="TRIGGER_DELAY" value="1."/>
     <define name="DEFAULT_CIRCLE_RADIUS" value="90."/>
+    <define name="FACE_REINJ_1"  value="1024"/>
   </section>
+
+  <section name="FMS">
+
+  </section>
+
+
+ <section name="SIMULATOR" prefix="NPS_">
+   <define name="ACTUATOR_NAMES"  value="{&quot;front_motor&quot;, &quot;back_motor&quot;, &quot;right_motor&quot;, &quot;left_motor&quot;}"/>
+   <define name="INITIAL_CONDITITONS" value="&quot;reset00&quot;"/>
+   <define name="SENSORS_PARAMS" value="&quot;nps_sensors_params_booz2_a1.h&quot;"/>
+ </section>
 
   <section name="VERTICAL CONTROL" prefix="V_CTL_">
     <define name="POWER_CTL_BAT_NOMINAL" value="11.0" unit="volt"/>
