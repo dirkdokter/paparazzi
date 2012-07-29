@@ -56,6 +56,7 @@ static inline void compute_imu_euler_and_rmat_from_quat(void);
 static inline void compute_body_euler_and_rmat_from_quat(void);
 static inline void compute_imu_orientation(void);
 static inline void compute_body_orientation(void);
+static inline void compute_lift_orientation(void);
 
 void ahrs_init(void) {
 
@@ -68,6 +69,14 @@ void ahrs_init(void) {
   INT32_QUAT_ZERO(ahrs.ltp_to_body_quat);
   INT32_RMAT_ZERO(ahrs.ltp_to_body_rmat);
   INT_RATES_ZERO(ahrs.body_rate);
+
+#if USE_FORCE_ALLOCATION_LAWS
+  /* set ltp_to_lift and lift_to_body to zero */
+  INT32_QUAT_ZERO(ahrs.lift_to_body_quat);
+  INT_EULERS_ZERO(ahrs.ltp_to_lift_euler);
+  INT32_QUAT_ZERO(ahrs.ltp_to_lift_quat);
+  INT32_RMAT_ZERO(ahrs.ltp_to_lift_rmat);
+#endif
 
   /* set ltp_to_imu so that body is zero */
   QUAT_COPY(ahrs.ltp_to_imu_quat, imu.body_to_imu_quat);
@@ -109,6 +118,9 @@ void ahrs_align(void) {
   compute_imu_euler_and_rmat_from_quat();
 
   compute_body_orientation();
+#if USE_FORCE_ALLOCATION_LAWS
+  compute_lift_orientation();
+#endif
 
   /* Use low passed gyro value as initial bias */
   RATES_COPY( ahrs_impl.gyro_bias, ahrs_aligner.lp_gyro);
@@ -152,7 +164,9 @@ void ahrs_propagate(void) {
   compute_imu_euler_and_rmat_from_quat();
 
   compute_body_orientation();
-
+#if USE_FORCE_ALLOCATION_LAWS
+  compute_lift_orientation();
+#endif
 }
 
 
@@ -427,6 +441,11 @@ void ahrs_realign_heading(int32_t heading) {
   /* compute other representations in body frame */
   compute_body_euler_and_rmat_from_quat();
 
+#if USE_FORCE_ALLOCATION_LAWS
+  /* compute ltp to lift rotations */
+  compute_lift_orientation();
+#endif
+
   /* compute ltp to imu rotations */
   compute_imu_orientation();
 
@@ -480,6 +499,16 @@ __attribute__ ((always_inline)) static inline void compute_imu_orientation(void)
   /* compute IMU rates */
   INT32_RMAT_RATEMULT(ahrs.imu_rate, imu.body_to_imu_rmat, ahrs.body_rate);
 
+}
+
+/* Compute ltp to lift rotation in quaternion representation and convert to rmat and euler*/
+__attribute__ ((always_inline)) static inline void compute_lift_orientation(void) {
+  /* Compute LTP to LIFT quaternion */
+  INT32_QUAT_COMP_INV(ahrs.ltp_to_lift_quat, ahrs.ltp_to_body_quat, ahrs.lift_to_body_quat);
+  /* Compute LTP to LIFT rotation matrix */
+  INT32_RMAT_OF_QUAT(ahrs.ltp_to_lift_rmat, ahrs.ltp_to_lift_quat);
+  /* compute LTP to LIFT eulers */
+  INT32_EULERS_OF_RMAT(ahrs.ltp_to_lift_euler, ahrs.ltp_to_lift_rmat);
 }
 
 

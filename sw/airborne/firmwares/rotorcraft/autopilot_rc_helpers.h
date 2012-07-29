@@ -62,7 +62,7 @@ static inline bool_t kill_switch_is_on(void) {
 }
 #endif
 
-uint8_t percent_from_rc(int channel)
+static inline uint8_t percent_from_rc(int channel)
 {
   int per = (MAX_PPRZ + (int32_t)radio_control.values[channel]) * 50 / MAX_PPRZ;
   if (per < 0)

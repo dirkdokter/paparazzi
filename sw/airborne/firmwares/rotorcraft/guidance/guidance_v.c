@@ -40,7 +40,6 @@
 
 #include "generated/airframe.h"
 
-
 /* warn if some gains are still negative */
 #if (GUIDANCE_V_HOVER_KP < 0) ||                   \
   (GUIDANCE_V_HOVER_KD < 0)   ||                   \
@@ -60,7 +59,7 @@ int32_t guidance_v_fb_cmd;
 int32_t guidance_v_delta_t;
 
 float guidance_v_nominal_throttle;
-
+int32_t guidance_v_throttle_command = 0;
 
 /** Direct throttle from radio control.
  *  range 0:#MAX_PPRZ
@@ -167,21 +166,26 @@ void guidance_v_run(bool_t in_flight) {
   // FIXME... SATURATIONS NOT TAKEN INTO ACCOUNT
   // AKA SUPERVISION and co
   if (in_flight) {
+
+#if USE_FORCE_ALLOCATION_LAWS
+    gv_adapt_run(ins_ltp_accel.z, guidance_v_throttle_command, guidance_v_zd_ref);
+#else
     gv_adapt_run(ins_ltp_accel.z, stabilization_cmd[COMMAND_THRUST], guidance_v_zd_ref);
+#endif
   }
 
   switch (guidance_v_mode) {
 
   case GUIDANCE_V_MODE_RC_DIRECT:
     guidance_v_z_sp = ins_ltp_pos.z; // for display only
-    stabilization_cmd[COMMAND_THRUST] = guidance_v_rc_delta_t;
+    guidance_v_throttle_command = guidance_v_rc_delta_t;
     break;
 
   case GUIDANCE_V_MODE_RC_CLIMB:
     guidance_v_zd_sp = guidance_v_rc_zd_sp;
     gv_update_ref_from_zd_sp(guidance_v_zd_sp);
     run_hover_loop(in_flight);
-    stabilization_cmd[COMMAND_THRUST] = guidance_v_delta_t;
+    guidance_v_throttle_command = guidance_v_delta_t;
     break;
 
   case GUIDANCE_V_MODE_CLIMB:
@@ -193,10 +197,10 @@ void guidance_v_run(bool_t in_flight) {
     gv_update_ref_from_zd_sp(guidance_v_zd_sp);
     run_hover_loop(in_flight);
 #if NO_RC_THRUST_LIMIT
-    stabilization_cmd[COMMAND_THRUST] = guidance_v_delta_t;
+    guidance_v_throttle_command = guidance_v_delta_t;
 #else
     // saturate max authority with RC stick
-    stabilization_cmd[COMMAND_THRUST] = Min(guidance_v_rc_delta_t, guidance_v_delta_t);
+    guidance_v_throttle_command = Min(guidance_v_rc_delta_t, guidance_v_delta_t);
 #endif
     break;
 
@@ -208,10 +212,10 @@ void guidance_v_run(bool_t in_flight) {
     gv_update_ref_from_z_sp(guidance_v_z_sp);
     run_hover_loop(in_flight);
 #if NO_RC_THRUST_LIMIT
-    stabilization_cmd[COMMAND_THRUST] = guidance_v_delta_t;
+    guidance_v_throttle_command = guidance_v_delta_t;
 #else
     // saturate max authority with RC stick
-    stabilization_cmd[COMMAND_THRUST] = Min(guidance_v_rc_delta_t, guidance_v_delta_t);
+    guidance_v_throttle_command = Min(guidance_v_rc_delta_t, guidance_v_delta_t);
 #endif
     break;
 
@@ -233,19 +237,23 @@ void guidance_v_run(bool_t in_flight) {
         guidance_v_delta_t = nav_throttle;
       }
 #if NO_RC_THRUST_LIMIT
-      stabilization_cmd[COMMAND_THRUST] = guidance_v_delta_t;
+      guidance_v_throttle_command = guidance_v_delta_t;
 #else
       /* use rc limitation if available */
       if (radio_control.status == RC_OK)
-        stabilization_cmd[COMMAND_THRUST] = Min(guidance_v_rc_delta_t, guidance_v_delta_t);
+        guidance_v_throttle_command = Min(guidance_v_rc_delta_t, guidance_v_delta_t);
       else
-        stabilization_cmd[COMMAND_THRUST] = guidance_v_delta_t;
+        guidance_v_throttle_command = guidance_v_delta_t;
 #endif
       break;
     }
   default:
     break;
   }
+
+#if !USE_FORCE_ALLOCATION_LAWS
+  stabilization_cmd[COMMAND_THRUST] = guidance_v_throttle_command;
+#endif
 }
 
 
