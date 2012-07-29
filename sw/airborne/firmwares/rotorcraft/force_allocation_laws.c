@@ -30,7 +30,7 @@
 #include "firmwares/rotorcraft/guidance/guidance_h.h"
 #include "firmwares/rotorcraft/guidance/guidance_v.h"
 #include "firmwares/rotorcraft/autopilot.h"
-firmwares/rotorcraft/autopilot_rc_helpers.h
+#include "firmwares/rotorcraft/autopilot_rc_helpers.h"
 
 #include "subsystems/radio_control.h"
 #include "firmwares/rotorcraft/stabilization.h"
@@ -38,8 +38,8 @@ firmwares/rotorcraft/autopilot_rc_helpers.h
 #include "subsystems/ahrs.h"
 #include "subsystems/ins.h"
 #include "math/pprz_algebra_int.h"
-/*#include "firmwares/rotorcraft/force_allocation_laws.h"
-#include "modules/ATMOS/multiGain.h"
+#include "firmwares/rotorcraft/force_allocation_laws.h"
+/*#include "modules/ATMOS/multiGain.h"
 #include "modules/ATMOS/newTransition.h"*/
 
 uint8_t transition_percentage;
@@ -57,10 +57,6 @@ int32_t dbg1 = 0;
 uint32_t dbg2 = 0;
 uint32_t dbg3 = 0;
 int32_t dbg4 = 0;
-
-
-
-
 
 
 int32_t outerloop_throttle_command = 0;

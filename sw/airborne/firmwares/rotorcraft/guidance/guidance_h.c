@@ -183,10 +183,17 @@ void guidance_h_run(bool_t  in_flight) {
     break;
 
   case GUIDANCE_H_MODE_RATE:
+#warning "THIS RATE MODE IS DEPRECATED, USE MODE_ATTITUDE_RATE_RC INSTEAD (yes it still has to be written)"
+#if USE_FORCE_ALLOCATION_LAWS
+    force_allocation_laws_run();
+#endif
     stabilization_rate_run(in_flight);
     break;
 
   case GUIDANCE_H_MODE_ATTITUDE:
+#if USE_FORCE_ALLOCATION_LAWS
+    force_allocation_laws_run();
+#endif
     stabilization_attitude_run(in_flight);
     break;
 
@@ -198,39 +205,44 @@ void guidance_h_run(bool_t  in_flight) {
     /* compute roll and pitch commands and set final attitude setpoint */
     guidance_h_traj_run(in_flight);
 
+#if USE_FORCE_ALLOCATION_LAWS
+    force_allocation_laws_run();
+#endif
     stabilization_attitude_run(in_flight);
     break;
 
   case GUIDANCE_H_MODE_NAV:
-    {
-      if (!in_flight) guidance_h_nav_enter();
+    if (!in_flight) guidance_h_nav_enter();
 
-      if (horizontal_mode == HORIZONTAL_MODE_ATTITUDE) {
-        stab_att_sp_euler.phi = nav_roll;
-        stab_att_sp_euler.theta = nav_pitch;
-        /* FIXME: heading can't be set via attitude block yet, use current heading for now */
-        stab_att_sp_euler.psi = ahrs.ltp_to_body_euler.psi;
+    if (horizontal_mode == HORIZONTAL_MODE_ATTITUDE) {
+      stab_att_sp_euler.phi = nav_roll;
+      stab_att_sp_euler.theta = nav_pitch;
+      /* FIXME: heading can't be set via attitude block yet, use current heading for now */
+      stab_att_sp_euler.psi = ahrs.ltp_to_body_euler.psi;
 #ifdef STABILISATION_ATTITUDE_TYPE_QUAT
-        INT32_QUAT_OF_EULERS(stab_att_sp_quat, stab_att_sp_euler);
-        INT32_QUAT_WRAP_SHORTEST(stab_att_sp_quat);
+      INT32_QUAT_OF_EULERS(stab_att_sp_quat, stab_att_sp_euler);
+      INT32_QUAT_WRAP_SHORTEST(stab_att_sp_quat);
 #endif
-      }
-      else {
-        INT32_VECT2_NED_OF_ENU(guidance_h_pos_sp, navigation_carrot);
+    }
+    else {
+      INT32_VECT2_NED_OF_ENU(guidance_h_pos_sp, navigation_carrot);
 
 #if GUIDANCE_H_USE_REF
-        guidance_h_update_reference(TRUE);
+      guidance_h_update_reference(TRUE);
 #else
-        guidance_h_update_reference(FALSE);
+      guidance_h_update_reference(FALSE);
 #endif
-        /* set psi command */
-        guidance_h_command_body.psi = nav_heading;
-        /* compute roll and pitch commands and set final attitude setpoint */
-        guidance_h_traj_run(in_flight);
-      }
-      stabilization_attitude_run(in_flight);
-      break;
+      /* set psi command */
+      guidance_h_command_body.psi = nav_heading;
+      /* compute roll and pitch commands and set final attitude setpoint */
+      guidance_h_traj_run(in_flight);
     }
+#if USE_FORCE_ALLOCATION_LAWS
+    force_allocation_laws_run();
+#endif
+    stabilization_attitude_run(in_flight);
+    break;
+
   default:
     break;
   }
