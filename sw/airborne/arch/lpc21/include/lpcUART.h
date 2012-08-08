@@ -97,6 +97,8 @@ typedef struct
 #define UMCR_DTR            (1 << 0)    // Data Terminal Ready
 #define UMCR_RTS            (1 << 1)    // Request To Send
 #define UMCR_LB             (1 << 4)    // Loopback
+#define UMCR_RTSEN          (1 << 6)    // RTS enable
+#define UMCR_CTSEN          (1 << 7)    // CTS enable
 
 // Line Status Register bit definitions
 #define ULSR_RDR            (1 << 0)    // Receive Data Ready

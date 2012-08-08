@@ -134,6 +134,8 @@
 #define U1_PINMASK      (0x000F0000)    /* PINSEL0 Mask for UART1 */
 #define U1_PINSEL_RX    (0x00040000)    /* PINSEL0 Value for UART1 RX only */
 #define U1_PINMASK_RX   (0x000C0000)    /* PINSEL0 Mask for UART1 RX only */
+#define U1_PINSEL_FC    (0x00500000)    /* PINSEL0 Value for UART1 Flow Control pins */
+#define U1_PINMASK_FC   (0x00F00000)    /* PINSEL0 Mask for UART1 Flow Control pins*/
 
 // UART1 Registers
 #define U1RBR           UART1_BASE->rbr /* Receive Buffer Register */

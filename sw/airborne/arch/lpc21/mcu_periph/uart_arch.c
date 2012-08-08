@@ -42,6 +42,15 @@ static inline void uart_enable_interrupts(struct uart_periph* p) {
   ((uartRegs_t *)(p->reg_addr))->ier = UIER_ERBFI;
 }
 
+static inline void uart_set_flow_control(struct uart_periph* p, uint8_t on) {
+  if (on) {
+    ((uartRegs_t *)(p->reg_addr))->mcr = (uint8_t)UMCR_RTSEN|UMCR_CTSEN;
+  }
+  else {
+    ((uartRegs_t *)(p->reg_addr))->mcr = (uint8_t)0;
+  }
+}
+
 static inline void uart_set_baudrate(struct uart_periph* p, uint32_t baud) {
   // set the baudrate
   ((uartRegs_t *)(p->reg_addr))->lcr = ULCR_DLAB_ENABLE;     // select divisor latches
@@ -230,6 +239,11 @@ void uart1_init( void ) {
 
   uart_disable_interrupts(&uart1);
   uart_set_baudrate(&uart1, UART1_BAUD);
+
+#if USE_UART1_FLOW_CONTROL
+  PINSEL0 = (PINSEL0 & ~U1_PINMASK_FC) | U1_PINSEL_FC;
+  uart_set_flow_control(&uart1,TRUE);
+#endif
 
   // initialize the interrupt vector
   VICIntSelect &= ~VIC_BIT(VIC_UART1);                // UART1 selected as IRQ
