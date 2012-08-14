@@ -29,7 +29,7 @@
 #ifndef PPM_ARCH_H
 #define PPM_ARCH_H
 
-#include "mcu_periph/sys_time.h"
+#include "sys_time.h"
 
 /**
  * On tiny (and booz) the ppm counter is running at the same speed as
@@ -37,14 +37,14 @@
  * Let's add a pair of macros to make it possible for them to be different.
  *
  */
-#if RC_PPM_TICS_USE_SYS
+//#if RC_PPM_TICS_USE_SYS
 #define RC_PPM_TICS_OF_USEC(_v)        SYS_TICS_OF_USEC((_v)/9)
 #define RC_PPM_SIGNED_TICS_OF_USEC(_v) SIGNED_SYS_TICS_OF_USEC((_v)/9)
-#else
-#define RC_PPM_TICKS_OF_USEC(_v)        CPU_TICKS_OF_USEC((_v)/9)
-#define RC_PPM_SIGNED_TICKS_OF_USEC(_v) SIGNED_CPU_TICKS_OF_USEC((_v)/9)
-#define USEC_OF_RC_PPM_TICKS(_v)        USEC_OF_CPU_TICKS((_v)*9)
-#endif
+/*#else
+#define RC_PPM_TICS_OF_USEC(_v)        CPU_TICKS_OF_USEC((_v)/9)
+#define RC_PPM_SIGNED_TICS_OF_USEC(_v) SIGNED_CPU_TICKS_OF_USEC((_v)/9)
+#define USEC_OF_RC_PPM_TICS(_v)        USEC_OF_CPU_TICKS((_v)*9)
+#endif*/
 
 #define PPM_NB_CHANNEL RADIO_CONTROL_NB_CHANNEL
 

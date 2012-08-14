@@ -162,7 +162,6 @@ void tim1_cc_irq_handler(void) {
     uint32_t now = TIM_GetCapture3(TIM1) + timer_rollover_cnt;
     DecodePpmFrame(now);
   }
-
 }
 #else
 void tim2_irq_handler(void) {
