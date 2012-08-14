@@ -10,9 +10,15 @@
 #define STM32_RCC_MODE RCC_HSE_Bypass
 #define STM32_PLL_MULT RCC_PLLMul_9
 
+/* Spektrum bind pin definition */
+#define BIND_PIN GPIO_Pin_1
+#define BIND_PIN_PORT GPIOA
+#define BIND_PIN_PERIPH RCC_APB2Periph_GPIOA
+
 /* Onboard LEDs */
 #define LED_1_BANK
 #define LED_STP08
+#define BODY 9
 
 // FIXME, this is just to make it compile
 #define POWER_SWITCH_LED 5
@@ -36,6 +42,18 @@
 //#define BOARD_ADC_CHANNEL_3 ADC_Channel_13
 #define BOARD_ADC_CHANNEL_3 ADC_Channel_0
 #define BOARD_ADC_CHANNEL_4 ADC_Channel_15
+
+#ifdef USE_AD1
+#ifndef ADC1_GPIO_INIT
+#define ADC1_GPIO_INIT(gpio) {                  \
+	    (gpio).GPIO_Pin  = GPIO_Pin_1 | GPIO_Pin_0; \
+	    (gpio).GPIO_Mode = GPIO_Mode_AIN;           \
+	    GPIO_Init(GPIOB, (&gpio));                  \
+	    (gpio).GPIO_Pin  = GPIO_Pin_0; \
+	    GPIO_Init(GPIOA, (&gpio));                  \
+}
+#endif // ADC1_GPIO_INIT
+#endif // USE_AD1
 
 #define BOARD_HAS_BARO
 
