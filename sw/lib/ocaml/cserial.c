@@ -63,8 +63,10 @@ value c_init_serial(value device, value speed)
   cur_termios.c_oflag  &=~(OPOST|ONLCR|OCRNL|ONOCR|ONLRET);
 
   /* control modes */
-  cur_termios.c_cflag &= ~(CSIZE|CSTOPB|CREAD|PARENB|PARODD|HUPCL|CLOCAL|CRTSCTS);
-  cur_termios.c_cflag |= CREAD|CS8|CLOCAL;
+  /*cur_termios.c_cflag &= ~(CSIZE|CSTOPB|CREAD|PARENB|PARODD|HUPCL|CLOCAL|CRTSCTS);
+  cur_termios.c_cflag |= CREAD|CS8|CLOCAL;*/
+  cur_termios.c_cflag &= ~(CSIZE|CSTOPB|CREAD|PARENB|PARODD|HUPCL|CLOCAL);
+  cur_termios.c_cflag |= CREAD|CS8|CLOCAL|CRTSCTS;
    
   /* local modes */
   cur_termios.c_lflag &= ~(ISIG|ICANON|IEXTEN|ECHO|FLUSHO|PENDIN);

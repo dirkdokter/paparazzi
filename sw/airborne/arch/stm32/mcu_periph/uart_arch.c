@@ -30,7 +30,7 @@
 #include "std.h"
 #include "pprz_baudrate.h"
 
-void uart_periph_set_baudrate(struct uart_periph* p, uint32_t baud, bool hw_flow_control) {
+void uart_periph_set_baudrate(struct uart_periph* p, uint32_t baud, bool_t hw_flow_control) {
 
   /* Configure USART */
   USART_InitTypeDef usart;
@@ -142,6 +142,7 @@ void uart1_init( void ) {
   GPIO_Init(UART1_RxPort, &gpio);
 
 #ifdef UART1_FLOW_CONTROL
+#warning "USING UART1 FLOW CONTROL"
   /* GPIOA: GPIO_Pin_12 USART1 Rts push-pull */
   gpio.GPIO_Pin   = UART1_RtsPin;
   gpio.GPIO_Mode  = GPIO_Mode_AF_PP;
