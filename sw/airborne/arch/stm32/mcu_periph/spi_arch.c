@@ -1201,12 +1201,104 @@ void process_tx_dma_interrupt(struct spi_periph *periph) {
 /*
  *
  * SPI Slave code
- *
- * FIXME implement it
+ * Currently only for F1, SPI1
  *
  */
 #ifdef SPI_SLAVE
+// SPI arch slave init
+#if USE_SPI1_SLAVE
+#warning "SPI1 slave: Untested code!"
 
-#warning SPI_SLAVE mode currently not implemented for STM32.
+#ifndef STM32F1
+#error "SPI1 slave on STM32 only implemented for STM32F1"
+#endif
+
+#if USE_SPI1
+#error "Using SPI1 as a slave and master at the same time is not possible."
+#endif
+
+static struct spi_periph_dma spi1_dma;
+
+void spi1_slave_arch_init(void) {
+  // set dma options
+  spi1_dma.spidr = (uint32_t)&SPI1_DR;
+  spi1_dma.dma = DMA1;
+  spi1_dma.rx_chan = DMA_CHANNEL2;
+  spi1_dma.tx_chan = DMA_CHANNEL3;
+  spi1_dma.rx_nvic_irq = NVIC_DMA1_CHANNEL2_IRQ;
+  spi1_dma.tx_nvic_irq = NVIC_DMA1_CHANNEL3_IRQ;
+  spi1_dma.tx_dummy_buf = 0;
+  spi1_dma.tx_extra_dummy_dma = FALSE;
+  spi1_dma.rx_dummy_buf = 0;
+  spi1_dma.rx_extra_dummy_dma = FALSE;
+
+  // set the default configuration
+  set_default_comm_config(&spi1_dma.comm);
+  spi1_dma.comm_sig = get_comm_signature(&spi1_dma.comm);
+
+  // set init struct, indices and status
+  spi1.reg_addr = (void *)SPI1;
+  spi1.init_struct = &spi1_dma;
+  spi1.trans_insert_idx = 0;
+  spi1.trans_extract_idx = 0;
+  spi1.status = SPIIdle;
+
+  // Enable SPI1 Periph and gpio clocks
+  rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_SPI1EN);
+
+  // Configure GPIOs: SCK, MISO and MOSI
+  // TODO configure lisa board files to use gpio_setup_pin_af function
+/*  gpio_set_mode(GPIO_BANK_SPI1_SCK, GPIO_MODE_INPUT,
+                GPIO_CNF_INPUT_FLOAT,
+                GPIO_SPI1_SCK | GPIO_SPI1_MOSI);
+
+  gpio_set_mode(GPIO_BANK_SPI1_MISO, GPIO_MODE_OUTPUT_50_MHZ,
+                GPIO_CNF_OUTPUT_ALTFN_PUSHPULL,
+                GPIO_SPI1_MISO);
+
+  gpio_set_mode(GPIO_BANK_SPI1_NSS, GPIO_MODE_INPUT,
+                  GPIO_CNF_INPUT_PULL_UPDOWN,
+                  GPIO_SPI1_NSS);*/
+
+  // reset SPI
+  spi_reset(SPI1);
+
+  // Disable SPI peripheral
+  spi_disable(SPI1);
+
+  // Force SPI mode over I2S.
+  SPI1_I2SCFGR = 0;
+
+  // configure master SPI.
+  spi_init_master(SPI1, spi1_dma.comm.br, spi1_dma.comm.cpol, spi1_dma.comm.cpha,
+                  spi1_dma.comm.dff, spi1_dma.comm.lsbfirst);
+
+  spi_disable_software_slave_management(SPI1);
+
+  //spi_set_slave_mode(SPI1);
+
+  // Enable SPI_1 DMA clock
+#ifdef STM32F1
+  rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_DMA1EN);
+#elif defined STM32F4
+  rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_DMA2EN);
+#endif
+
+  // Enable SPI1 periph.
+  spi_enable(SPI1);
+
+  spi_arch_int_enable(&spi1);
+}
+#endif /* USE_SPI1_SLAVE */
+
+
+
+// Slave Select / NSS pin GPIO config
+
+
+// DMA config?
+
+
+// SPI transaction handling
 
 #endif /* SPI_SLAVE */

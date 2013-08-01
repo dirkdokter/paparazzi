@@ -217,4 +217,8 @@
     <define name="MAX_BAT_LEVEL" value="12.4" unit="V"/>
   </section>
 
+  <modules>
+    <load name="gumstix_qr_code_spi_link.xml"/>
+  </modules>
+
 </airframe>
